@@ -3,6 +3,7 @@ import MidArea from "./components/MidArea";
 import { DragDropContext } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import {
   addMolecules,
   deleteAtom,
@@ -10,12 +11,15 @@ import {
   moveNewAtom,
 } from "./redux/midarea/action";
 import PreviewArea from "./components/previewarea";
+import { replayHistoryAction } from "./redux/playhistory/action";
 
 const App = () => {
   const dispatch = useDispatch();
 
   const complist = useSelector((state) => state.list.midAreaCompound);
   const progList = useSelector((state) => state.list.programeAreaCompound);
+  const historyList = useSelector((state) => state.playHistory.history);
+
   const onDragEnd = (result) => {
     let { source, destination, draggableId, combine, type } = result;
     console.log("result", result);
@@ -106,29 +110,95 @@ const App = () => {
     }
   };
 
+  const SectionContainer = styled.section`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+  `;
+
+  const ReplayButton = styled.button`
+  background-color: #ffffff;
+  color: #3498db;
+  padding: 5px 8px;
+  border: 1.5px solid #3498db;
+  border-radius: 20px;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  opacity:  ${(props) => (props.disabled ? 0.5 : 1)};
+  &:hover {
+    background-color: ${(props) => (props.disabled ? "#ffffff" : "#3498db30")};
+    border-color: ${(props) => (props.disabled ? "#3498db" : "#2980b9")};
+    box-shadow: ${(props) =>
+      props.disabled ? "none" : "0 2px 4px rgba(0, 0, 0, 0.1)"};
+  }
+:`;
+
+  const ReplayIcon = styled.span`
+    margin-right: 8px; /* Adjust spacing between icon and text */
+  `;
+
+  const replayHistory = () => {
+    dispatch(replayHistoryAction());
+  };
   return (
-    // <AppContainer>
-    //   <FlexContainer>
-    <DragDropContext onDragEnd={onDragEnd}>
-      {/* <div className="flex-1 h-screen overflow-hidden flex flex-row bg-white border-t border-r border-gray-200 rounded-tr-xl mr-2"> */}
-      {/* <ProgrameArea /> */}
+    <div
+      style={{
+        backgroundColor: "#E5F0FF",
+        height: "100vh",
+        overflow: "hidden",
+        flexDirection: "column",
+        display: "flex",
+      }}
+    >
+      <SectionContainer>
+        <ReplayButton
+          disabled={historyList.length <= 0}
+          onClick={replayHistory}
+        >
+          <ReplayIcon>&#x21bb;</ReplayIcon>Replay
+        </ReplayButton>
+      </SectionContainer>
+
       <div
         style={{
-          display: "flex",
+          height: "100%",
+          width: "100%",
           flexDirection: "row",
+          display: "flex",
+
+          // backgroundColor: "red",
+          overflow: "hidden",
         }}
       >
-        <MidArea />
+        <div
+          style={{
+            height: "99.9%",
+            width: "70%",
+            display: "flex",
+            backgroundColor: "#F9F9F9",
+            borderTopRightRadius: "10px", // Adjust the value as needed
+            borderBottomRightRadius: "10px", // Adjust the value as needed
+            borderWidth: "1.4px", // Adjust the border width as needed
+            borderStyle: "solid", // Specify the
+            marginRight: 30,
+            borderColor: "#00000026",
+          }}
+        >
+          <DragDropContext onDragEnd={onDragEnd}>
+            <MidArea />
+          </DragDropContext>
+        </div>
+
         <PreviewArea />
       </div>
-
-      {/* </div> */}
-      {/* <div className="w-1/3 relative h-screen overflow-scroll flex flex-row bg-white border-t border-l border-gray-200 rounded-tl-xl ml-2">
-            <PreviewArea />
-          </div> */}
-    </DragDropContext>
-    //   </FlexContainer>
-    // </AppContainer>
+    </div>
   );
 };
 

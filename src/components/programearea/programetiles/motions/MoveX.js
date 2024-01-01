@@ -1,17 +1,8 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { updateParamOfAtom } from "../../../../redux/midarea/action";
 import { moveXSteps } from "../../utils";
-
-// Styled components
-const StyledPaper = styled.div`
-  // background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  // padding: 1rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  display: flex;
-  // align-self: flex-start;
-`;
 
 export const MoveButton = styled.div`
   text-align: center;
@@ -35,37 +26,54 @@ export const StyledInput = styled.input`
   color: black;
 `;
 
-const MoveX = ({ character, comp_id }) => {
-  const [steps, setSteps] = useState(0);
+const MoveX = ({ character, atomId, getChildDetails, moleculeId, param }) => {
+  // console.log("MoveX", getChildDetails);
+  // console.log(param);
+  const dispatch = useDispatch();
+  // const [param, setSteps] = useState(param);
 
-  const handleClick = React.useCallback(() => {
-    // console.log("handleClick", steps);
-    moveXSteps(steps);
-  }, [steps]);
+  // const getParameters = React.useCallback(() => {
+  //   return param;
+  // }, [param]);
+  const handleClick = React.useCallback(async () => {
+    try {
+      await moveXSteps(param);
+      console.log("MoveX completed!");
+    } catch (error) {
+      console.error("Error in moveXSteps:", error);
+    }
+  }, [param]);
 
-  const buttonRef = React.useRef(null);
+  // const buttonRef = React.useRef(null);
 
-  React.useEffect(() => {
-    buttonRef.current.addEventListener("click", handleClick);
+  // React.useEffect(() => {
+  //   buttonRef.current.addEventListener("click", handleClick);
 
-    return () => {
-      buttonRef?.current?.removeEventListener("click", handleClick);
-    };
-  }, [handleClick]);
+  //   return () => {
+  //     buttonRef?.current?.removeEventListener("click", handleClick);
+  //   };
+  // }, [handleClick]);
 
   return (
     // <StyledPaper>
-    <MoveButton id={comp_id} ref={buttonRef}>
+    <MoveButton id={atomId} onClick={() => handleClick()}>
       move X ,
       <StyledInput
         type="number"
-        value={steps}
+        value={param}
         onClickCapture={(e) => {
           e.stopPropagation();
         }}
         onChange={(e) => {
           e.stopPropagation();
-          setSteps(parseInt(e.target.value));
+          dispatch(
+            updateParamOfAtom({
+              moleculeId: moleculeId,
+              atomId: atomId,
+              param: parseInt(e.target.value),
+            })
+          );
+          // setSteps(parseInt(e.target.value));
         }}
       />
       steps

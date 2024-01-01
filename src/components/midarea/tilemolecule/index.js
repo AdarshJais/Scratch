@@ -2,9 +2,14 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import { renderProgrameTiles } from "../../programearea/utils";
+import {
+  getProgFunction,
+  playMolecule,
+  renderProgrameTiles,
+} from "../../programearea/utils";
 import TileAtom from "../tileatom";
 import convertLayerAtRulesToControlComments from "tailwindcss/lib/lib/convertLayerAtRulesToControlComments";
+import { historyEnqueueAction } from "../../../redux/playhistory/action";
 
 const DraggabeMolecule = styled.div`
   // margin: 2px;
@@ -41,32 +46,31 @@ const StyledButton = styled.button`
     background-color: #0d47a1; /* Dark color on hover */
   }
 `;
-const runMoleculeProg = (atoms, event) => {
-  function triggerClickEvent(atomId) {
-    var element = document.getElementById(atomId);
-    console.log("element", element);
-    if (element) {
-      // Trigger a click event
-      element.click();
-    } else {
-      console.error("Element not found for atom ID: " + atomId);
-    }
+const runMoleculeProg = async (atoms, event) => {
+  for (const atom of atoms) {
+    let func = getProgFunction(atom.prog);
+    await func(atom.param, false);
   }
-
-  // Loop through the atoms array and trigger click events
-  // atoms.map((atom) => console.log("adarsh"));
-  atoms.map((atom) => triggerClickEvent(atom?.id));
 };
+
 export default function TileMolecule({ moleculeId, atoms, index }) {
+  const dispatch = useDispatch();
   const [clicked, setClicked] = React.useState(false);
 
   const handleClick = () => {
     setClicked(true);
     runMoleculeProg(atoms);
-    // Optionally, reset the clicked state after a certain duration
+    dispatch(
+      historyEnqueueAction({
+        molecule: {
+          moleculeId: moleculeId,
+          atoms: atoms,
+        },
+      })
+    );
     setTimeout(() => {
       setClicked(false);
-    }, 1000); // Adjust the duration as needed
+    }, 1000);
   };
 
   return (
@@ -93,7 +97,15 @@ export default function TileMolecule({ moleculeId, atoms, index }) {
               >
                 <StyledButton onClick={handleClick}>Play</StyledButton>
                 {atoms?.map((atom, index) => {
-                  return <TileAtom atom={atom} index={index} key={index} />;
+                  return (
+                    <TileAtom
+                      atom={atom}
+                      index={index}
+                      key={index}
+                      moleculeId={moleculeId}
+                      // getChildDetails={getChildDetails}
+                    />
+                  );
                 })}
 
                 {provided.placeholder}

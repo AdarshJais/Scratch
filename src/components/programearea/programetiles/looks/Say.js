@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { updateParamOfAtom } from "../../../../redux/midarea/action";
 import { moveXSteps, sayMessage } from "../../utils";
 
 export const LookTileContainer = styled.div`
@@ -24,35 +26,42 @@ export const StyledInput = styled.input`
   color: black;
 `;
 
-const Say = ({ character, comp_id }) => {
-  const [message, setMessage] = useState("hello");
-
+const Say = ({ character, atomId, getChildDetails, moleculeId, param }) => {
+  // const [message, setMessage] = useState("hello");
+  const dispatch = useDispatch();
   const handleClick = React.useCallback(() => {
-    sayMessage(message);
-  }, [message]);
+    sayMessage(param);
+  }, [param]);
 
-  const buttonRef = React.useRef(null);
+  // const buttonRef = React.useRef(null);
 
-  React.useEffect(() => {
-    buttonRef.current.addEventListener("click", handleClick);
+  // React.useEffect(() => {
+  //   buttonRef.current.addEventListener("click", handleClick);
 
-    return () => {
-      buttonRef?.current?.removeEventListener("click", handleClick);
-    };
-  }, [handleClick]);
+  //   return () => {
+  //     buttonRef?.current?.removeEventListener("click", handleClick);
+  //   };
+  // }, [handleClick]);
 
   return (
     // <StyledPaper>
-    <LookTileContainer id={comp_id} ref={buttonRef}>
+    <LookTileContainer id={atomId} onClick={handleClick}>
       say
       <StyledInput
         type="text"
-        value={message}
+        value={param}
         onClickCapture={(e) => {
           e.stopPropagation();
         }}
         onChange={(e) => {
-          e.target.value.length > 0 && setMessage(e.target.value);
+          e.target.value.length > 0 &&
+            dispatch(
+              updateParamOfAtom({
+                moleculeId: moleculeId,
+                atomId: atomId,
+                param: e.target.value,
+              })
+            );
         }}
       />
     </LookTileContainer>

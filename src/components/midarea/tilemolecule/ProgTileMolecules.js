@@ -46,7 +46,14 @@ export default function ProgTileMolecules({ moleculeId, atoms, index }) {
                 ref={provided.innerRef}
               >
                 {atoms?.map((atom, index) => {
-                  return <TileAtom atom={atom} index={index} key={index} />;
+                  return (
+                    <TileAtom
+                      atom={atom}
+                      index={index}
+                      key={index}
+                      moleculeId={moleculeId}
+                    />
+                  );
                 })}
 
                 {provided.placeholder}

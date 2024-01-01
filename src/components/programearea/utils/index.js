@@ -13,52 +13,91 @@ import SetY from "../programetiles/motions/SetY";
 import TurnAntiClockWise from "../programetiles/motions/TurnAntiClockWise";
 import TurnClockWise from "../programetiles/motions/TurnClockWise";
 
-export function renderProgrameTiles(key, id, index) {
+export function renderProgrameTiles(
+  key,
+  atomId,
+  getChildDetails,
+  moleculeId,
+  param
+) {
   switch (key) {
     case "MOVE_X":
-      return <MoveX comp_id={id} index={index} />;
+      return <MoveX atomId={atomId} moleculeId={moleculeId} param={param} />;
     case "MOVE_Y":
-      return <MoveY comp_id={id} index={index} />;
+      return <MoveY atomId={atomId} moleculeId={moleculeId} param={param} />;
     case "MOVE_XY":
-      return <MoveXY comp_id={id} index={index} />;
+      return <MoveXY atomId={atomId} moleculeId={moleculeId} param={param} />;
     case "SET_X":
-      return <SetX comp_id={id} index={index} />;
+      return <SetX atomId={atomId} moleculeId={moleculeId} param={param} />;
     case "SET_Y":
-      return <SetY comp_id={id} index={index} />;
+      return <SetY atomId={atomId} moleculeId={moleculeId} param={param} />;
     case "SET_XY":
-      return <SetXY comp_id={id} index={index} />;
+      return <SetXY atomId={atomId} moleculeId={moleculeId} param={param} />;
     // case "SET_XY_AFTER":
-    //   return <MoveX comp_id={id} index={index} />;
+    //   return <MoveX atomId={atomId} moleculeId={moleculeId} param={param}  />;
     case "TURN_ANTI_CLOCKWISE":
-      return <TurnAntiClockWise comp_id={id} index={index} />;
+      return (
+        <TurnAntiClockWise
+          atomId={atomId}
+          moleculeId={moleculeId}
+          param={param}
+        />
+      );
     case "TURN_CLOCKWISE":
-      return <TurnClockWise comp_id={id} index={index} />;
+      return (
+        <TurnClockWise atomId={atomId} moleculeId={moleculeId} param={param} />
+      );
     case "POINT_TOWARDS":
-      return <PointTowards comp_id={id} index={index} />;
+      return (
+        <PointTowards atomId={atomId} moleculeId={moleculeId} param={param} />
+      );
 
     case "SAY":
-      return <Say comp_id={id} index={index} />;
+      return <Say atomId={atomId} moleculeId={moleculeId} param={param} />;
     case "SAY_TILL_TIME":
-      return <SayTillTime comp_id={id} index={index} />;
+      return (
+        <SayTillTime atomId={atomId} moleculeId={moleculeId} param={param} />
+      );
     case "THINK":
-      return <Think comp_id={id} index={index} />;
+      return <Think atomId={atomId} moleculeId={moleculeId} param={param} />;
     case "THINK_TILL_TIME":
-      return <ThinkTillTime comp_id={id} index={index} />;
+      return (
+        <ThinkTillTime atomId={atomId} moleculeId={moleculeId} param={param} />
+      );
     default:
-      return <MoveX comp_id={id} index={index} />;
+      return <MoveX atomId={atomId} moleculeId={moleculeId} param={param} />;
   }
 }
 
-export const getCatElem = () => {
-  return document.getElementById("cat");
+export function getProgFunction(prog) {
+  const progFunc = {
+    MOVE_X: moveXSteps,
+    MOVE_Y: moveYSteps,
+    MOVE_XY: moveXAndYSteps,
+    SET_X: setToX,
+    SET_Y: setToY,
+    SET_XY: setToXAndY,
+    TURN_ANTI_CLOCKWISE: turnAntiClockWise,
+    TURN_CLOCKWISE: turnClockWise,
+    POINT_TOWARDS: pointTowards,
+    SAY: sayMessage,
+    SAY_TILL_TIME: sayMessageTillTime,
+    THINK: thinkMessage,
+    THINK_TILL_TIME: thinkMessageTillTime,
+  };
+  return progFunc[prog];
+}
+
+export const getCatElem = (history) => {
+  return document.getElementById(history ? "cat-history" : "cat");
 };
 
 export const getCatParentElem = () => {
   return document.getElementById("cat-parent");
 };
 
-export const getCatOffsets = () => {
-  let el = getCatElem();
+export const getCatOffsets = (history) => {
+  let el = getCatElem(history);
   var offsets = el.getBoundingClientRect();
   return offsets;
 };
@@ -81,53 +120,87 @@ export const getOrigin = () => {
   };
 };
 
-export const moveXSteps = (steps) => {
-  let el = getCatElem();
-  let catOffsets = getCatOffsets();
-  el.style.position = "absolute";
-  el.style.left = catOffsets?.left + steps + "px";
+const animatePosition = async (
+  direction,
+  value,
+  initialValue,
+  targetValue,
+  history
+) => {
+  let el = getCatElem(history);
+
+  const animationDuration = 900; // in milliseconds
+  const framesPerSecond = 60;
+  const totalFrames = framesPerSecond * (animationDuration / 1000);
+  const stepSize = (targetValue - initialValue) / totalFrames;
+
+  for (let frame = 0; frame < totalFrames; frame++) {
+    const newPosition = initialValue + stepSize * frame;
+    el.style.position = "absolute";
+    el.style[direction] = newPosition + "px";
+
+    if (history) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1000 / framesPerSecond)
+      );
+    }
+  }
+
+  // Ensure the final position is set accurately
+  el.style[direction] = targetValue + "px";
 };
 
-export const moveYSteps = (steps) => {
-  let el = getCatElem();
-  let catOffsets = getCatOffsets();
-  el.style.position = "absolute";
-  el.style.top = catOffsets?.top + steps + "px";
+const moveSteps = (direction, steps, history) => {
+  return new Promise(async (resolve) => {
+    let el = getCatElem(history);
+    let catOffsets = el.getBoundingClientRect();
+
+    const initialPosition = catOffsets[direction];
+    const targetPosition = initialPosition + steps;
+
+    await animatePosition(
+      direction,
+      steps,
+      initialPosition,
+      targetPosition,
+      history
+    );
+    resolve();
+  });
 };
 
-export const moveXAndYSteps = ({ xSteps, ySteps }) => {
-  moveXSteps(xSteps);
-  moveYSteps(ySteps);
+export const moveXSteps = (steps, history) => moveSteps("left", steps, history);
+export const moveYSteps = (steps, history) => moveSteps("top", steps, history);
+
+export const moveXAndYSteps = ({ x, y } = param, history) => {
+  moveXSteps(x, history);
+  moveYSteps(y, history);
 };
 
-export const setToX = (x) => {
-  let el = getCatElem();
-  let origin = getOrigin();
-  el.style.position = "absolute";
-  el.style.left = origin?.x + x + "px";
+const setPosition = (direction, value, history) => {
+  return new Promise(async (resolve) => {
+    let el = getCatElem(history);
+    let origin = getOrigin();
+
+    const initialValue = direction == "left" ? origin.x : origin.y;
+    const targetValue = initialValue + value;
+
+    await animatePosition(direction, value, initialValue, targetValue, history);
+
+    resolve();
+  });
 };
 
-export const setToY = (y) => {
-  let el = getCatElem();
-  let origin = getOrigin();
-  el.style.position = "absolute";
-  el.style.top = origin?.y + y + "px";
+export const setToX = (x, history) => setPosition("left", x, history);
+export const setToY = (y, history) => setPosition("top", y, history);
+
+export const setToXAndY = ({ x, y } = param, history) => {
+  setToX(x, history);
+  setToY(y, history);
 };
 
-export const setToXAndY = ({ x, y }) => {
-  setToX(x);
-  setToY(y);
-};
-
-export const setToXAndYAfter = ({ x, y, time }) => {
-  setTimeout(() => {
-    setToX(x);
-    setToY(y);
-  }, time);
-};
-
-export const getCurrentRotateValue = () => {
-  const element = getCatElem();
+export const getCurrentRotateValue = (history) => {
+  const element = getCatElem(history);
   if (element) {
     const computedStyle = window.getComputedStyle(element);
     const initialTransform =
@@ -152,76 +225,93 @@ export const getCurrentRotateValue = () => {
   return 0;
 };
 
-export const turnClockWise = (degree) => {
-  const element = getCatElem();
-  const newDegree = getCurrentRotateValue() + degree;
-  element.style.transform = `rotate(${newDegree}deg)`;
+const rotateElement = async (degree, history, absolute = false) => {
+  const element = getCatElem(history);
+  const currentDegree = getCurrentRotateValue(history);
+  const targetDegree = absolute ? degree : currentDegree + degree;
+
+  const animationDuration = 900; // in milliseconds
+  const framesPerSecond = 60;
+  const totalFrames = framesPerSecond * (animationDuration / 1000);
+  const stepSize = (targetDegree - currentDegree) / totalFrames;
+
+  return new Promise(async (resolve) => {
+    for (let frame = 0; frame < totalFrames; frame++) {
+      const newDegree = currentDegree + stepSize * frame;
+      element.style.transform = `rotate(${newDegree}deg)`;
+
+      if (history) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 / framesPerSecond)
+        );
+      }
+    }
+
+    // Ensure the final rotation is set accurately
+    element.style.transform = `rotate(${targetDegree}deg)`;
+    resolve();
+  });
 };
 
-export const turnAntiClockWise = (degree) => {
-  const element = getCatElem();
-  const newDegree = getCurrentRotateValue() - degree;
-  element.style.transform = `rotate(${newDegree}deg)`;
+const pointTowards = (degree, history) => rotateElement(degree, history, true);
+const turnClockWise = (degree, history) =>
+  rotateElement(degree, history, false);
+const turnAntiClockWise = (degree, history) =>
+  rotateElement(-degree, history, false);
+
+export const getSayBubbleElem = (history) => {
+  return document.getElementById(history ? "say-bubble-history" : "say-bubble");
 };
 
-export const pointTowards = (degree) => {
-  const element = getCatElem();
-  if (element) {
-    element.style.transform = `rotate(${degree}deg)`;
-  }
+export const getThinkBubbleElem = (history) => {
+  return document.getElementById(
+    history ? "think-bubble-history" : "think-bubble"
+  );
 };
-
-// export const pointTowards_ = (targetAngle) => {
-//   const element = getCatElem();
-
-//   // Calculate the difference in angles
-//   const angleDifference = targetAngle - getCurrentRotateValue();
-
-//   // Set the rotation to point towards the target angle
-//   element.style.transform = `rotate(${angleDifference}deg)`;
-// };
-
-export const getSayBubbleElem = () => {
-  return document.getElementById("say-bubble");
-};
-
-export const getThinkBubbleElem = () => {
-  return document.getElementById("think-bubble");
-};
-export const sayMessage = (message) => {
-  let sayElem = getSayBubbleElem();
-  let thinkElem = getThinkBubbleElem();
+export const sayMessage = (message, history) => {
+  let sayElem = getSayBubbleElem(history);
+  let thinkElem = getThinkBubbleElem(history);
   sayElem.style.display = "block";
   thinkElem.style.display = "none";
   sayElem.innerHTML = message;
 };
 
-export const sayMessageTillTime = ({ message, time }) => {
-  let sayElem = getSayBubbleElem();
-  let thinkElem = getThinkBubbleElem();
-  sayElem.style.display = "block";
-  thinkElem.style.display = "none";
-  sayElem.innerHTML = message;
-  setTimeout(() => {
-    sayElem.style.display = "none";
-  }, time);
-};
+export const sayMessageTillTime = ({ message, time } = param, history) => {
+  return new Promise((resolve) => {
+    let sayElem = getSayBubbleElem(history);
+    let thinkElem = getThinkBubbleElem(history);
 
-export const thinkMessage = (message) => {
-  let sayElem = getSayBubbleElem();
-  let thinkElem = getThinkBubbleElem();
-  thinkElem.style.display = "block";
-  sayElem.style.display = "none";
-  thinkElem.innerHTML = message;
-};
-
-export const thinkMessageTillTime = ({ message, time }) => {
-  let sayElem = getSayBubbleElem();
-  let thinkElem = getThinkBubbleElem();
-  thinkElem.style.display = "block";
-  sayElem.style.display = "none";
-  thinkElem.innerHTML = message;
-  setTimeout(() => {
+    sayElem.style.display = "block";
     thinkElem.style.display = "none";
-  }, time);
+    sayElem.innerHTML = message;
+
+    setTimeout(() => {
+      sayElem.style.display = "none";
+      resolve(); // Resolve the promise once the timeout completes
+    }, time);
+  });
+};
+
+export const thinkMessage = (message, history) => {
+  let sayElem = getSayBubbleElem(history);
+  let thinkElem = getThinkBubbleElem(history);
+  thinkElem.style.display = "block";
+  sayElem.style.display = "none";
+  thinkElem.innerHTML = message;
+};
+
+export const thinkMessageTillTime = ({ message, time } = param, history) => {
+  return new Promise((resolve) => {
+    let sayElem = getSayBubbleElem(history);
+    let thinkElem = getThinkBubbleElem(history);
+
+    thinkElem.style.display = "block";
+    sayElem.style.display = "none";
+    thinkElem.innerHTML = message;
+
+    setTimeout(() => {
+      thinkElem.style.display = "none";
+      resolve(); // Resolve the promise once the timeout completes
+    }, time);
+  });
 };

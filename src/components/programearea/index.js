@@ -65,7 +65,7 @@ const ProgrameArea = () => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    {renderProgrameTiles(x, i, i)}
+                    {renderProgrameTiles(x, i)}
                   </div>
                 )}
               </StyledDraggable>

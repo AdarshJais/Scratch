@@ -4,9 +4,18 @@ import {
   MOVE_ATOM,
   MOVE_NEW_ATOM,
   DELETE_ATOM,
+  UPDATE_PARAM_VALUE,
 } from "./types";
 import { v4 as uuidv4 } from "uuid";
-
+const getInitialParam = (prog) => {
+  switch (key) {
+    case "MOVE_X": {
+      return 0;
+    }
+    default:
+      return 0;
+  }
+};
 const initialState = {
   midAreaCompound: [
     // each molecules is a dropable so dropableId = moleculeId
@@ -50,27 +59,38 @@ const initialState = {
         {
           id: `atom_${uuidv4()}`,
           prog: "MOVE_X",
+          param: 0,
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "MOVE_Y",
+          param: 0,
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "MOVE_XY",
+          param: {
+            x: 0,
+            y: 0,
+          },
         },
-
         {
           id: `atom_${uuidv4()}`,
           prog: "SET_X",
+          param: 0,
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "SET_Y",
+          param: 0,
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "SET_XY",
+          param: {
+            x: 0,
+            y: 0,
+          },
         },
         // {
         //   id: `atom_${uuidv4()}`,
@@ -79,14 +99,17 @@ const initialState = {
         {
           id: `atom_${uuidv4()}`,
           prog: "TURN_ANTI_CLOCKWISE",
+          param: 0,
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "TURN_CLOCKWISE",
+          param: 0,
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "POINT_TOWARDS",
+          param: 0,
         },
       ],
     },
@@ -96,18 +119,28 @@ const initialState = {
         {
           id: `atom_${uuidv4()}`,
           prog: "SAY",
+          param: "hello",
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "SAY_TILL_TIME",
+          param: {
+            message: "heo",
+            time: 2000,
+          },
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "THINK",
+          param: "hello",
         },
         {
           id: `atom_${uuidv4()}`,
           prog: "THINK_TILL_TIME",
+          param: {
+            message: "adf",
+            time: 2000,
+          },
         },
       ],
     },
@@ -190,6 +223,7 @@ export const listReducer = (state = initialState, action) => {
         let newAtom = {
           id: `atom_${uuidv4()}`,
           prog: existingAtomFromSource?.prog,
+          param: existingAtomFromSource?.param,
         };
 
         newStateMidAreaCompound[destinationMoleculeIndex].atoms.splice(
@@ -207,22 +241,28 @@ export const listReducer = (state = initialState, action) => {
     case ADD_MOLECULE: {
       const { sourceMoleculeId, sourceAtomId } = action.payload;
 
-      let atomValue = null;
+      let atomDetail = null;
       if (sourceMoleculeId == "motion" || sourceMoleculeId == "look") {
-        atomValue = state.programeAreaCompound
+        atomDetail = state.programeAreaCompound
           .find((molecule) => molecule.id === sourceMoleculeId)
-          .atoms.find((atom) => atom.id === sourceAtomId)?.prog;
+          .atoms.find((atom) => atom.id === sourceAtomId);
       } else {
-        atomValue = state.midAreaCompound
+        atomDetail = state.midAreaCompound
           .find((molecule) => molecule.id === sourceMoleculeId)
-          .atoms.find((atom) => atom.id === sourceAtomId)?.prog;
+          .atoms.find((atom) => atom.id === sourceAtomId);
       }
       // Fetch the atom prog from the existing list using moleculeSourceId and atomId
 
       // Create a new molecule
       const newMolecule = {
         id: `molecule_${uuidv4()}`,
-        atoms: [{ id: `atom_${uuidv4()}`, prog: atomValue }],
+        atoms: [
+          {
+            id: `atom_${uuidv4()}`,
+            prog: atomDetail?.prog,
+            param: atomDetail?.param,
+          },
+        ],
       };
 
       // Update the midAreaCompound based on the source
@@ -274,6 +314,36 @@ export const listReducer = (state = initialState, action) => {
       return {
         ...state,
         midAreaCompound: newStateMidAreaCompound,
+      };
+    }
+
+    case UPDATE_PARAM_VALUE: {
+      return {
+        ...state,
+        midAreaCompound: state.midAreaCompound.map((molecule) =>
+          molecule.id === action.payload.moleculeId
+            ? {
+                ...molecule,
+                atoms: molecule.atoms.map((atom) =>
+                  atom.id === action.payload.atomId
+                    ? { ...atom, param: action.payload.param }
+                    : atom
+                ),
+              }
+            : molecule
+        ),
+        programeAreaCompound: state.programeAreaCompound.map((molecule) =>
+          molecule.id === action.payload.moleculeId
+            ? {
+                ...molecule,
+                atoms: molecule.atoms.map((atom) =>
+                  atom.id === action.payload.atomId
+                    ? { ...atom, param: action.payload.param }
+                    : atom
+                ),
+              }
+            : molecule
+        ),
       };
     }
 

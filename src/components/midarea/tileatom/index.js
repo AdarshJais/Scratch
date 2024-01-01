@@ -12,19 +12,27 @@ const ProgTileContainer = styled.div`
   flex-direction: column;
 `;
 
-export default function TileAtom({ atom, index }) {
+export default function TileAtom({ atom, index, getChildDetails, moleculeId }) {
   let tile = `${atom?.prog}`;
-  let atom_id = `${atom?.id}`;
+  let atomId = `${atom?.id}`;
+  let param = atom?.param;
 
+  console.log("tileAtom", getChildDetails);
   return (
-    <Draggable key={`${atom_id}`} draggableId={`${atom_id}`} index={index}>
+    <Draggable key={`${atomId}`} draggableId={`${atomId}`} index={index}>
       {(provided) => (
         <ProgTileContainer
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          {renderProgrameTiles(tile, atom_id)}
+          {renderProgrameTiles(
+            tile,
+            atomId,
+            getChildDetails,
+            moleculeId,
+            param
+          )}
           {/* {provided.placeholder} */}
         </ProgTileContainer>
       )}

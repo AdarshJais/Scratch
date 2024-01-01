@@ -5,6 +5,7 @@ import {
   MOVE_ATOM,
   MOVE_NEW_ATOM,
   DELETE_ATOM,
+  UPDATE_PARAM_VALUE,
 } from "./types";
 
 export const updateList = (id, new_list) => {
@@ -39,6 +40,13 @@ export const moveNewAtom = (payload) => {
 export const deleteAtom = (payload) => {
   return {
     type: DELETE_ATOM,
+    payload: payload,
+  };
+};
+
+export const updateParamOfAtom = (payload) => {
+  return {
+    type: UPDATE_PARAM_VALUE,
     payload: payload,
   };
 };
