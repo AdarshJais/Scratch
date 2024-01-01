@@ -12,6 +12,8 @@ import SetXY from "../components/programmetypes/motions/SetXY";
 import SetY from "../components/programmetypes/motions/SetY";
 import TurnAntiClockWise from "../components/programmetypes/motions/TurnAntiClockWise";
 import TurnClockWise from "../components/programmetypes/motions/TurnClockWise";
+const CAT_WIDTH = 95.17898101806641;
+const CAT_HEIGHT = 100.04156036376953;
 
 export function renderProgrameTiles(
   key,
@@ -109,8 +111,6 @@ export const getCatParentOffsets = () => {
 };
 
 export const getOrigin = () => {
-  const CAT_WIDTH = 95.17898101806641;
-  const CAT_HEIGHT = 100.04156036376953;
   let offsetsParent = getCatParentOffsets();
   let originX = offsetsParent.left + (offsetsParent.width / 2 - CAT_WIDTH / 2);
   let originY = offsetsParent.height / 2 - CAT_HEIGHT / 2;
@@ -315,4 +315,29 @@ export const thinkMessageTillTime = ({ message, time } = param, history) => {
       resolve(); // Resolve the promise once the timeout completes
     }, time);
   });
+};
+
+export const setCatAtInitial = () => {
+  let elParent = document.getElementById("cat-parent");
+  var offsetsParent = elParent.getBoundingClientRect();
+  let initialX = offsetsParent.left + (offsetsParent.width / 2 - CAT_WIDTH / 2);
+  let initialY = offsetsParent.height / 2 - CAT_HEIGHT / 2;
+
+  let cat = document.getElementById("cat");
+  cat.style.position = "absolute";
+  cat.style.left = initialX + "px";
+  cat.style.top = initialY + "px";
+};
+
+export const setCatHistoryAtInitial = () => {
+  let elParent = document.getElementById("cat-parent");
+  var offsetsParent = elParent.getBoundingClientRect();
+  let initialX = offsetsParent.left + (offsetsParent.width / 2 - CAT_WIDTH / 2);
+  let initialY = offsetsParent.height / 2 - CAT_HEIGHT / 2;
+
+  let cat_history = document.getElementById("cat-history");
+  cat_history.style.position = "absolute";
+  cat_history.style.left = initialX + "px";
+  cat_history.style.top = initialY + "px";
+  cat_history.style.display = "none";
 };

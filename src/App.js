@@ -10,7 +10,7 @@ import {
   moveNewAtom,
 } from "./redux/midarea/action";
 import PreviewArea from "./components/previewarea";
-import { replayHistoryAction } from "./redux/playhistory/action";
+import Header from "./components/header";
 
 const Container = styled.div`
   background-color: #e5f0ff;
@@ -39,45 +39,11 @@ const LeftContainer = styled.div`
   margin-right: 30px;
   border-color: #00000026;
 `;
-const SectionContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-`;
-
-const ReplayButton = styled.button`
-background-color: #ffffff;
-color: #3498db;
-padding: 5px 8px;
-border: 1.5px solid #3498db;
-border-radius: 20px;
-cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-display: flex;
-align-items: center;
-font-size: 12px;
-font-weight: bold;
-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
-box-shadow 0.3s ease;
-opacity:  ${(props) => (props.disabled ? 0.5 : 1)};
-&:hover {
-background-color: ${(props) => (props.disabled ? "#ffffff" : "#3498db30")};
-border-color: ${(props) => (props.disabled ? "#3498db" : "#2980b9")};
-box-shadow: ${(props) =>
-  props.disabled ? "none" : "0 2px 4px rgba(0, 0, 0, 0.1)"};
-}
-:`;
-
-const ReplayIcon = styled.span`
-  margin-right: 8px;
-`;
 
 const App = () => {
   const dispatch = useDispatch();
   const complist = useSelector((state) => state.list.midAreaCompound);
   const progList = useSelector((state) => state.list.programeAreaCompound);
-  const historyList = useSelector((state) => state.playHistory.history);
 
   const onDragEnd = (result) => {
     let { source, destination, draggableId, combine, type } = result;
@@ -168,20 +134,9 @@ const App = () => {
     }
   };
 
-  const replayHistory = () => {
-    dispatch(replayHistoryAction());
-  };
   return (
     <Container>
-      <SectionContainer>
-        <ReplayButton
-          disabled={historyList.length <= 0}
-          onClick={replayHistory}
-        >
-          <ReplayIcon>&#x21bb;</ReplayIcon>Replay
-        </ReplayButton>
-      </SectionContainer>
-
+      <Header />
       <MainContainer>
         <LeftContainer>
           <DragDropContext onDragEnd={onDragEnd}>

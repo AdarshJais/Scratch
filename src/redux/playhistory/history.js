@@ -1,5 +1,15 @@
-import { getProgFunction, moveXSteps } from "../../utils";
-import { HISTORY_DEQUEUE, HISTORY_ENQUEUE, REPLAY_HISTORY } from "./types";
+import {
+  getProgFunction,
+  moveXSteps,
+  setCatAtInitial,
+  setCatHistoryAtInitial,
+} from "../../utils";
+import {
+  DELETE_HISTORY,
+  HISTORY_DEQUEUE,
+  HISTORY_ENQUEUE,
+  REPLAY_HISTORY,
+} from "./types";
 
 const initialState = {
   history: [],
@@ -16,8 +26,16 @@ export const playHistory = (state = initialState, action) => {
         history: copyHistory,
       };
     }
-    case HISTORY_DEQUEUE: {
+
+    case DELETE_HISTORY: {
+      setCatAtInitial();
+      setCatHistoryAtInitial();
+      return {
+        ...state,
+        history: [],
+      };
     }
+
     case REPLAY_HISTORY: {
       let cat_history = document.getElementById("cat-history");
 
@@ -33,13 +51,15 @@ export const playHistory = (state = initialState, action) => {
             await func(atom.param, true);
           }
         }
+        setTimeout(() => {
+          setCatHistoryAtInitial();
+        }, 900);
       }
 
       processAtoms();
 
       return {
         ...state,
-        history: [],
       };
     }
     default: {

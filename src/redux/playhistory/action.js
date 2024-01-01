@@ -1,4 +1,9 @@
-import { HISTORY_DEQUEUE, HISTORY_ENQUEUE, REPLAY_HISTORY } from "./types";
+import {
+  DELETE_HISTORY,
+  HISTORY_DEQUEUE,
+  HISTORY_ENQUEUE,
+  REPLAY_HISTORY,
+} from "./types";
 
 export const historyEnqueueAction = (payload) => {
   return {
@@ -17,5 +22,11 @@ export const historyDequeueAction = (payload) => {
 export const replayHistoryAction = () => {
   return {
     type: REPLAY_HISTORY,
+  };
+};
+
+export const deleteHistoryAction = () => {
+  return {
+    type: DELETE_HISTORY,
   };
 };
