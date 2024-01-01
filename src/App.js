@@ -1,7 +1,6 @@
 import React from "react";
-import MidArea from "./components/MidArea";
+import ProgrammeArea from "./components/programmeaarea";
 import { DragDropContext } from "react-beautiful-dnd";
-import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
@@ -13,16 +12,75 @@ import {
 import PreviewArea from "./components/previewarea";
 import { replayHistoryAction } from "./redux/playhistory/action";
 
+const Container = styled.div`
+  background-color: #e5f0ff;
+  height: 100vh;
+  overflow: hidden;
+  flex-direction: column;
+  display: flex;
+`;
+const MainContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  flex-direction: row;
+  display: flex;
+  overflow: hidden;
+`;
+
+const LeftContainer = styled.div`
+  height: 99.9%;
+  width: 70%;
+  display: flex;
+  background-color: #f9f9f9;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-width: 1.4px;
+  border-style: solid;
+  margin-right: 30px;
+  border-color: #00000026;
+`;
+const SectionContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+`;
+
+const ReplayButton = styled.button`
+background-color: #ffffff;
+color: #3498db;
+padding: 5px 8px;
+border: 1.5px solid #3498db;
+border-radius: 20px;
+cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+display: flex;
+align-items: center;
+font-size: 12px;
+font-weight: bold;
+transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+box-shadow 0.3s ease;
+opacity:  ${(props) => (props.disabled ? 0.5 : 1)};
+&:hover {
+background-color: ${(props) => (props.disabled ? "#ffffff" : "#3498db30")};
+border-color: ${(props) => (props.disabled ? "#3498db" : "#2980b9")};
+box-shadow: ${(props) =>
+  props.disabled ? "none" : "0 2px 4px rgba(0, 0, 0, 0.1)"};
+}
+:`;
+
+const ReplayIcon = styled.span`
+  margin-right: 8px;
+`;
+
 const App = () => {
   const dispatch = useDispatch();
-
   const complist = useSelector((state) => state.list.midAreaCompound);
   const progList = useSelector((state) => state.list.programeAreaCompound);
   const historyList = useSelector((state) => state.playHistory.history);
 
   const onDragEnd = (result) => {
     let { source, destination, draggableId, combine, type } = result;
-    console.log("result", result);
     if (type == "atoms") {
       if (source.droppableId == "motion" || source.droppableId == "look") {
         if (!destination) {
@@ -110,53 +168,11 @@ const App = () => {
     }
   };
 
-  const SectionContainer = styled.section`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 5px;
-  `;
-
-  const ReplayButton = styled.button`
-  background-color: #ffffff;
-  color: #3498db;
-  padding: 5px 8px;
-  border: 1.5px solid #3498db;
-  border-radius: 20px;
-  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
-    box-shadow 0.3s ease;
-  opacity:  ${(props) => (props.disabled ? 0.5 : 1)};
-  &:hover {
-    background-color: ${(props) => (props.disabled ? "#ffffff" : "#3498db30")};
-    border-color: ${(props) => (props.disabled ? "#3498db" : "#2980b9")};
-    box-shadow: ${(props) =>
-      props.disabled ? "none" : "0 2px 4px rgba(0, 0, 0, 0.1)"};
-  }
-:`;
-
-  const ReplayIcon = styled.span`
-    margin-right: 8px; /* Adjust spacing between icon and text */
-  `;
-
   const replayHistory = () => {
     dispatch(replayHistoryAction());
   };
   return (
-    <div
-      style={{
-        backgroundColor: "#E5F0FF",
-        height: "100vh",
-        overflow: "hidden",
-        flexDirection: "column",
-        display: "flex",
-      }}
-    >
+    <Container>
       <SectionContainer>
         <ReplayButton
           disabled={historyList.length <= 0}
@@ -166,39 +182,16 @@ const App = () => {
         </ReplayButton>
       </SectionContainer>
 
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          flexDirection: "row",
-          display: "flex",
-
-          // backgroundColor: "red",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            height: "99.9%",
-            width: "70%",
-            display: "flex",
-            backgroundColor: "#F9F9F9",
-            borderTopRightRadius: "10px", // Adjust the value as needed
-            borderBottomRightRadius: "10px", // Adjust the value as needed
-            borderWidth: "1.4px", // Adjust the border width as needed
-            borderStyle: "solid", // Specify the
-            marginRight: 30,
-            borderColor: "#00000026",
-          }}
-        >
+      <MainContainer>
+        <LeftContainer>
           <DragDropContext onDragEnd={onDragEnd}>
-            <MidArea />
+            <ProgrammeArea />
           </DragDropContext>
-        </div>
+        </LeftContainer>
 
         <PreviewArea />
-      </div>
-    </div>
+      </MainContainer>
+    </Container>
   );
 };
 

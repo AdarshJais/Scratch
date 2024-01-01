@@ -1,26 +1,19 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import { renderProgrameTiles } from "../../programearea/utils";
 import TileAtom from "../tileatom";
 
 const DraggabeMolecule = styled.div`
-  // margin: 2px;
-  // padding: 8px;
-  // background-color: yellow;
   display: flex;
   align-self: flex-start;
   flex-direction: column;
 `;
 
 const DropableList = styled.div`
-  // background-color: pink;
   padding: 8px;
   display: flex;
   align-self: flex-start;
   flex-direction: column;
-  // Apply margin to all direct children
   > * {
     margin-bottom: 15px;
   }

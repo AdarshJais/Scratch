@@ -1,7 +1,4 @@
-import {
-  getProgFunction,
-  moveXSteps,
-} from "../../components/programearea/utils";
+import { getProgFunction, moveXSteps } from "../../utils";
 import { HISTORY_DEQUEUE, HISTORY_ENQUEUE, REPLAY_HISTORY } from "./types";
 
 const initialState = {

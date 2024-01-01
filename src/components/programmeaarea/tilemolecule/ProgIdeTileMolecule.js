@@ -1,15 +1,10 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import {
-  getProgFunction,
-  playMolecule,
-  renderProgrameTiles,
-} from "../../programearea/utils";
 import TileAtom from "../tileatom";
-import convertLayerAtRulesToControlComments from "tailwindcss/lib/lib/convertLayerAtRulesToControlComments";
 import { historyEnqueueAction } from "../../../redux/playhistory/action";
+import { getProgFunction } from "../../../utils";
 
 const DraggabeMolecule = styled.div`
   // margin: 2px;
@@ -31,7 +26,7 @@ const DropableList = styled.div`
   flex-direction: column;
 `;
 
-const StyledButton = styled.button`
+const PlayButton = styled.button`
   background-color: #1a237e; /* Dark color */
   color: #fff;
   padding: 3px 5px;
@@ -53,7 +48,7 @@ const runMoleculeProg = async (atoms, event) => {
   }
 };
 
-export default function TileMolecule({ moleculeId, atoms, index }) {
+export default function ProgIdeTileMolecule({ moleculeId, atoms, index }) {
   const dispatch = useDispatch();
   const [clicked, setClicked] = React.useState(false);
 
@@ -95,7 +90,7 @@ export default function TileMolecule({ moleculeId, atoms, index }) {
                 ref={provided.innerRef}
                 isDraggingOver={snapshot?.isDraggingOver}
               >
-                <StyledButton onClick={handleClick}>Play</StyledButton>
+                <PlayButton onClick={handleClick}>Play</PlayButton>
                 {atoms?.map((atom, index) => {
                   return (
                     <TileAtom

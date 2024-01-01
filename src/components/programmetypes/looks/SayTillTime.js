@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { updateParamOfAtom } from "../../../../redux/midarea/action";
-import {
-  moveXSteps,
-  sayMessage,
-  sayMessageTillTime,
-  thinkMessageTillTime,
-} from "../../utils";
-import { LookTileContainer, StyledInput } from "./Say";
+import { updateParamOfAtom } from "../../../redux/midarea/action";
+import { moveXSteps, sayMessage, sayMessageTillTime } from "../../../utils";
+import { LookTileContainer, StyledInput } from "./components";
 
-const ThinkTillTime = ({
+const SayTillTime = ({
   character,
   atomId,
   getChildDetails,
@@ -23,9 +18,8 @@ const ThinkTillTime = ({
   // });
 
   const dispatch = useDispatch();
-
   const handleClick = React.useCallback(() => {
-    thinkMessageTillTime({
+    sayMessageTillTime({
       message: param.message,
       time: param.time,
     });
@@ -44,7 +38,7 @@ const ThinkTillTime = ({
   return (
     // <StyledPaper>
     <LookTileContainer id={atomId} onClick={handleClick}>
-      think
+      say
       <StyledInput
         type="text"
         value={param.message}
@@ -63,6 +57,7 @@ const ThinkTillTime = ({
                 },
               })
             );
+          // setState({ ...state, message: e.target.value });
         }}
       />
       for
@@ -84,6 +79,7 @@ const ThinkTillTime = ({
                 },
               })
             );
+          // setState({ ...state, time: parseInt(e.target.value * 1000) });
         }}
       />
       sec
@@ -92,4 +88,4 @@ const ThinkTillTime = ({
   );
 };
 
-export default ThinkTillTime;
+export default SayTillTime;

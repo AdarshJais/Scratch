@@ -1,22 +1,29 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { updateParamOfAtom } from "../../../../redux/midarea/action";
-import { moveXAndYSteps } from "../../utils";
-import { MoveButton, StyledInput } from "./MoveX";
+import { updateParamOfAtom } from "../../../redux/midarea/action";
+import { thinkMessageTillTime } from "../../../utils";
+import { LookTileContainer, StyledInput } from "./components";
 
-const MoveXY = ({ character, atomId, getChildDetails, moleculeId, param }) => {
-  const dispatch = useDispatch();
+const ThinkTillTime = ({
+  character,
+  atomId,
+  getChildDetails,
+  moleculeId,
+  param,
+}) => {
   // const [state, setState] = useState({
-  //   x: 0,
-  //   y: 0,
+  //   message: "hello",
+  //   time: 2000,
   // });
 
+  const dispatch = useDispatch();
+
   const handleClick = React.useCallback(() => {
-    moveXAndYSteps({
-      x: param.x,
-      y: param.y,
+    thinkMessageTillTime({
+      message: param.message,
+      time: param.time,
     });
-  }, [param.x, param.y]);
+  }, [param.message, param.time]);
 
   // const buttonRef = React.useRef(null);
 
@@ -29,14 +36,36 @@ const MoveXY = ({ character, atomId, getChildDetails, moleculeId, param }) => {
   // }, [handleClick]);
 
   return (
-    <MoveButton id={atomId} onClick={handleClick}>
-      move x
+    // <StyledPaper>
+    <LookTileContainer id={atomId} onClick={handleClick}>
+      think
       <StyledInput
-        type="number"
-        value={param.x}
+        type="text"
+        value={param.message}
         onClickCapture={(e) => {
           e.stopPropagation();
         }}
+        onChange={(e) => {
+          e.target.value.length > 0 &&
+            dispatch(
+              updateParamOfAtom({
+                moleculeId: moleculeId,
+                atomId: atomId,
+                param: {
+                  message: e.target.value,
+                  time: param.time,
+                },
+              })
+            );
+        }}
+      />
+      for
+      <StyledInput
+        type="number"
+        onClickCapture={(e) => {
+          e.stopPropagation();
+        }}
+        value={param.time / 1000}
         onChange={(e) => {
           parseInt(e.target.value) !== 0 &&
             dispatch(
@@ -44,38 +73,17 @@ const MoveXY = ({ character, atomId, getChildDetails, moleculeId, param }) => {
                 moleculeId: moleculeId,
                 atomId: atomId,
                 param: {
-                  y: param.y,
-                  x: parseInt(e.target.value),
+                  message: param.message,
+                  time: parseInt(e.target.value * 1000),
                 },
               })
             );
-          // setState({ ...state, x: parseInt(e.target.value) });
         }}
       />
-      Y
-      <StyledInput
-        type="number"
-        value={param.y}
-        onChange={(e) => {
-          parseInt(e.target.value) !== 0 &&
-            dispatch(
-              updateParamOfAtom({
-                moleculeId: moleculeId,
-                atomId: atomId,
-                param: {
-                  x: param.x,
-                  y: parseInt(e.target.value),
-                },
-              })
-            );
-          // setState({ ...state, y: parseInt(e.target.value) });
-        }}
-        onClickCapture={(e) => {
-          e.stopPropagation();
-        }}
-      />
-    </MoveButton>
+      sec
+    </LookTileContainer>
+    // </StyledPaper>
   );
 };
 
-export default MoveXY;
+export default ThinkTillTime;

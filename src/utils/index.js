@@ -1,17 +1,17 @@
 import React from "react";
-import Say from "../programetiles/looks/Say";
-import SayTillTime from "../programetiles/looks/SayTillTime";
-import Think from "../programetiles/looks/Think";
-import ThinkTillTime from "../programetiles/looks/ThinkTillTime";
-import MoveX from "../programetiles/motions/MoveX";
-import MoveXY from "../programetiles/motions/MoveXY";
-import MoveY from "../programetiles/motions/MoveY";
-import PointTowards from "../programetiles/motions/PointTowards";
-import SetX from "../programetiles/motions/SetX";
-import SetXY from "../programetiles/motions/SetXY";
-import SetY from "../programetiles/motions/SetY";
-import TurnAntiClockWise from "../programetiles/motions/TurnAntiClockWise";
-import TurnClockWise from "../programetiles/motions/TurnClockWise";
+import Say from "../components/programmetypes/looks/Say";
+import SayTillTime from "../components/programmetypes/looks/SayTillTime";
+import Think from "../components/programmetypes/looks/Think";
+import ThinkTillTime from "../components/programmetypes/looks/ThinkTillTime";
+import MoveX from "../components/programmetypes/motions/MoveX";
+import MoveXY from "../components/programmetypes/motions/MoveXY";
+import MoveY from "../components/programmetypes/motions/MoveY";
+import PointTowards from "../components/programmetypes/motions/PointTowards";
+import SetX from "../components/programmetypes/motions/SetX";
+import SetXY from "../components/programmetypes/motions/SetXY";
+import SetY from "../components/programmetypes/motions/SetY";
+import TurnAntiClockWise from "../components/programmetypes/motions/TurnAntiClockWise";
+import TurnClockWise from "../components/programmetypes/motions/TurnClockWise";
 
 export function renderProgrameTiles(
   key,
@@ -253,10 +253,11 @@ const rotateElement = async (degree, history, absolute = false) => {
   });
 };
 
-const pointTowards = (degree, history) => rotateElement(degree, history, true);
-const turnClockWise = (degree, history) =>
+export const pointTowards = (degree, history) =>
+  rotateElement(degree, history, true);
+export const turnClockWise = (degree, history) =>
   rotateElement(degree, history, false);
-const turnAntiClockWise = (degree, history) =>
+export const turnAntiClockWise = (degree, history) =>
   rotateElement(-degree, history, false);
 
 export const getSayBubbleElem = (history) => {

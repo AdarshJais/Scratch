@@ -7,10 +7,10 @@ const CatParent = styled.div`
   height: 100vh;
   width: 30%;
   background-color: white;
-  border-top-left-radius: 10px; /* Adjust the value as needed */
-  border-bottom-left-radius: 10px; /* Adjust the value as needed */
-  border-width: 2px; /* Adjust the border width as needed */
-  border-style: solid; /* Specify the border style (e.
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-width: 2px;
+  border-style: solid;
 `;
 
 const CAT_WIDTH = 95.17898101806641;

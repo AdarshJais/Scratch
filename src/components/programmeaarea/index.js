@@ -1,21 +1,9 @@
-import React, { useState } from "react";
-import { Droppable, Draggable } from "react-beautiful-dnd";
-import { renderProgrameTiles } from "../programearea/utils";
+import React from "react";
+import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import TileMolecule from "./tilemolecule";
-import ProgrameArea from "../programearea";
-import ProgTileMolecules from "./tilemolecule/ProgTileMolecules";
-import { replayHistory } from "../../redux/playhistory/action";
-// Styled components
-// const Container = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   height: 100%;
-//   width: 100%;
-//   overflow: auto;
-//   padding: 1.5rem;
-// `;
+import { useSelector } from "react-redux";
+import ProgIdeTileMolecule from "./tilemolecule/ProgIdeTileMolecule";
+import ProgTileMolecules from "./tilemolecule/ProgTypeTileMolecules";
 
 const DroppableContainer = styled.div`
   display: flex;
@@ -23,11 +11,9 @@ const DroppableContainer = styled.div`
   height: "100%";
   width: 100%;
   overflow-y: auto;
-  // background-color: red;
-  // box-sizing: border-box;
 `;
 
-const ProgAreaContainer = styled.div`
+const ProgTypeContainer = styled.div`
   // background-color: pink;
   height: 100%;
   width: 25%;
@@ -53,16 +39,6 @@ const ProgIdeContainer = styled.div`
 
 const ProgContainer = styled.div``;
 
-const Button = styled.button`
-  margin: 0;
-  padding: 0.5rem;
-  background-color: #2196f3;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
 const ProgTypeHeading = styled.div`
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12pt;
@@ -70,15 +46,7 @@ const ProgTypeHeading = styled.div`
   font-weight: bold;
 }`;
 
-const RunButton = styled(Button)`
-  background-color: #673ab7;
-  font-size: 13px;
-  &:hover {
-    background-color: #512da8;
-  }
-`;
-
-const MidArea = () => {
+const ProgrammeArea = () => {
   const midAreaCompound = useSelector((state) => state.list.midAreaCompound);
   const programeAreaCompound = useSelector(
     (state) => state.list.programeAreaCompound
@@ -104,7 +72,7 @@ const MidArea = () => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            <ProgAreaContainer>
+            <ProgTypeContainer>
               {programeAreaCompound?.map((molecule) => {
                 return (
                   <>
@@ -120,13 +88,13 @@ const MidArea = () => {
                   </>
                 );
               })}
-            </ProgAreaContainer>
+            </ProgTypeContainer>
 
             <ProgIdeContainer>
               {midAreaCompound?.map((moleculeDetails, index) => {
                 if (moleculeDetails?.atoms.length) {
                   return (
-                    <TileMolecule
+                    <ProgIdeTileMolecule
                       moleculeId={moleculeDetails?.id}
                       atoms={moleculeDetails?.atoms}
                       index={index}
@@ -145,4 +113,4 @@ const MidArea = () => {
   );
 };
 
-export default MidArea;
+export default ProgrammeArea;
